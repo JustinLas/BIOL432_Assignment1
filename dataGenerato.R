@@ -31,7 +31,9 @@ measurements <- data.frame(
 
 print(measurements)
 
+# Taking the measurements and making them a .csv file 
 write.csv(measurements, "measurements.csv", row.names = FALSE)
+
 
 
 

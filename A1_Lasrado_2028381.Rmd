@@ -1,0 +1,93 @@
+---
+title: "BIOL 432 A1"
+author: "Justin Lasrado"
+date: "2025-09-04"
+output: html_document
+---
+
+
+```{r}
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+
+# This script creates measurements of randomly selected species, with random limb width, limb length and observers
+source("dataGenerato.R")
+
+# This script takes the measurements and then solves for the volume of each species limb and adds a column for this measurement in measurement.csv 
+source("volumeEstimato.R")
+
+# Load revised measurements.csv 
+
+measurements <- read.csv("measurements.csv")
+
+# Inspecting data to ensure its been correctly imported
+head (measurements)
+```
+
+```{r}
+# Sorting the data by species, then observer, and limbb volume
+Measurements_sort <- measurements %>% 
+  arrange(Organism, Observer, volume)
+head(Measurements_sort)
+```
+```{r}
+# Using the mean volume to create the average volume for each species 
+Avrg_volume <- Measurements_sort %>% 
+  group_by(Organism) %>%
+  summarize(Average_volume = mean(volume))
+
+Avrg_volume
+```
+```{r}
+# Counting the amount of times each species is seen by each observer 
+Obs_count <- Measurements_sort %>%
+  group_by(Organism, Observer) %>%
+  summarize(Count = n())
+
+Obs_count
+``` 
+
+```{r}
+# creating a boxplot of thhe distribution of Limb Volume by Species, with a legend and minimal theme 
+
+ggplot(Measurements_sort, aes(x = Organism, y= volume, fill = Organism))+
+  geom_boxplot()+
+  theme_minimal()+
+  labs(title = "Limb Volume Distrubution by Species", 
+       x= "Species",
+       y= "Limb Volume")
+```
+
+```{r}
+# Created a multipanel histogram using facet_wrap to create a panel for each organism 
+ggplot(Measurements_sort, aes(x = volume, fill = Organism))+
+  geom_histogram(binwidth = diff(range(Measurements_sort$volume))/20, colour = "black")+
+  facet_wrap(~Organism, scales = "free")+
+  theme_classic()+
+  labs(title = "Multi-Panel Hhistograms of Limb Volume by Speies",
+       x= "Limb Volume",
+       y= "Frequency")
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
